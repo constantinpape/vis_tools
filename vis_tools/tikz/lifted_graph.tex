@@ -1,0 +1,59 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{siunitx}
+
+\usepackage{pifont}
+\usepackage{amssymb}
+
+\newcommand{\yyslant}{0.0}
+\newcommand{\xxslant}{0.0}
+\newcommand{\yyshift}{4}
+\newcommand{\xxshift}{4}
+\newcommand{\xshift}{2.3cm}
+\newcommand{\xxspace}{4.0cm}
+
+\newcommand{\yslant}{0.5}
+\newcommand{\xslant}{-1.3}
+\newcommand{\yspace}{0.6cm}
+\newcommand{\xspace}{2.3cm}
+\newcommand{\rpwidth}{0.07\textwidth}
+\newcommand{\rrpwidth}{0.13\textwidth}
+
+
+\begin{document}
+
+\tikzstyle{img_style}  = [inner sep=0pt, draw]
+\tikzstyle{oseg_style} = [img_style, black, very thin]
+\tikzstyle{slanted_style}=[every node/.append style={yslant=\yslant,xslant=\xslant}, yslant=\yslant,xslant=\xslant]
+
+% styles for the nodes in the rag
+% \tikzstyle{rag_node} = [fill=white,draw=black,circle,inner sep=0pt,minimum size=5pt,very thin,scale=0.05]
+\tikzstyle{rag_node} = [fill=white,draw=yellow,circle,inner sep=0pt,minimum size=5pt,very thin,scale=0.05]
+\tikzstyle{in_plane_edge} = [line width=0.05pt,scale=0.05, opacity=0.8]
+\tikzstyle{lifted_edge} = [line width=0.4pt,scale=0.15,densely dashdotted, dash pattern=on \pgflinewidth off .1mm]
+
+\tikzset{>=latex} % nice arrow head
+
+\begin{tikzpicture}[scale=1]
+    
+    % used to estimate figure height and width
+    % programmatically
+    \newlength\iwidth
+    \newlength\iheight
+
+    \begin{scope}[xshift=0*\xspace, yshift = 0*\yspace]
+      % estimate figure w and h
+      \settoheight\iheight{\includegraphics[width=\rpwidth]{im.png}}
+      \settowidth\iwidth{\includegraphics[width=\rpwidth]{im.png}}
+      \node[oseg_style] (rawseg) {\includegraphics[width=\rpwidth]{im.png}};
+      \begin{scope}[ x=\iheight,y=\iwidth,xshift=-\iwidth/2.0,yshift=-\iheight/2.0]
+        \input{nodes}
+        \input{edges}
+        \input{lifted_edges}
+      \end{scope}
+    \end{scope}
+
+
+\end{tikzpicture}
+\end{document} 
