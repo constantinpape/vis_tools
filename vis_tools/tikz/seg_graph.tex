@@ -28,9 +28,9 @@
 \tikzstyle{slanted_style}=[every node/.append style={yslant=\yslant,xslant=\xslant}, yslant=\yslant,xslant=\xslant]
 
 % styles for the nodes in the rag
-\tikzstyle{rag_node} = [fill=white,draw=black,circle,inner sep=0pt,minimum size=5pt,very thin,scale=0.05]
+% \tikzstyle{rag_node} = [fill=white,draw=black,circle,inner sep=0pt,minimum size=5pt,very thin,scale=0.05]
+\tikzstyle{rag_node} = [fill=white,draw=yellow,circle,inner sep=0pt,minimum size=5pt,very thin,scale=0.05]
 \tikzstyle{in_plane_edge} = [line width=0.1pt,scale=0.05]
-\tikzstyle{lifted_edge} = [line width=0.4pt,scale=0.15,densely dashdotted, dash pattern=on \pgflinewidth off .1mm]
 
 \tikzset{>=latex} % nice arrow head
 
@@ -43,12 +43,12 @@
 
     \begin{scope}[xshift=0*\xspace, yshift = 0*\yspace]
       % estimate figure w and h
-      \settoheight\iheight{\includegraphics[width=\rpwidth]{tmp_tex/im.png}}
-      \settowidth\iwidth{\includegraphics[width=\rpwidth]{tmp_tex/im.png}}
-      \node[oseg_style] (rawseg) {\includegraphics[width=\rpwidth]{tmp_tex/im.png}};
+      \settoheight\iheight{\includegraphics[width=\rpwidth]{im.png}}
+      \settowidth\iwidth{\includegraphics[width=\rpwidth]{im.png}}
+      \node[oseg_style] (rawseg) {\includegraphics[width=\rpwidth]{im.png}};
       \begin{scope}[ x=\iheight,y=\iwidth,xshift=-\iwidth/2.0,yshift=-\iheight/2.0]
-        \input{tmp_tex/nodes}
-        \input{tmp_tex/edges}
+        \input{nodes}
+        \input{edges}
       \end{scope}
     \end{scope}
 
