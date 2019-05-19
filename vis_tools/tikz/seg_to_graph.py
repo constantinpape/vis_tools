@@ -31,8 +31,8 @@ def get_nodes(seg, exclude_nodes, node_style):
     return node_str
 
 
-def get_edges_with_weights(uv_ids, edge_weights, exclude_nodes, edge_threshold,
-                           exclude_edges, edge_style):
+def get_edges_with_weights(uv_ids, edge_weights, exclude_nodes, exclude_edges,
+                           edge_threshold, edge_style):
     style, _ = edge_style
     edge_str = ""
     for edge_id in range(uv_ids.shape[0]):
