@@ -23,7 +23,7 @@ def make_edges3d2d(segmentation):
 
 
 def make_edges2d(segmentation):
-    """ Make 3d edge volume from 3d segmentation
+    """ Make 2d edge volume from 3d segmentation
         but only compute the edges in xy-plane.
         This may be more appropriate for anisotropic volumes.
     """
