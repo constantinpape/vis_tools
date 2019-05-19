@@ -32,13 +32,16 @@ def get_nodes(seg, exclude_nodes, node_style):
 
 
 def get_edges_with_weights(uv_ids, edge_weights, exclude_nodes, edge_threshold,
-                           edge_style):
+                           exclude_edges, edge_style):
     style, _ = edge_style
     edge_str = ""
     for edge_id in range(uv_ids.shape[0]):
         u = uv_ids[edge_id, 0]
         v = uv_ids[edge_id, 1]
         if u in exclude_nodes or v in exclude_nodes:
+            continue
+
+        if (u, v) in exclude_edges:
             continue
 
         repulsive = edge_weights[edge_id] > edge_threshold
@@ -49,13 +52,16 @@ def get_edges_with_weights(uv_ids, edge_weights, exclude_nodes, edge_threshold,
     return edge_str
 
 
-def get_edges_without_weights(uv_ids, exclude_nodes, edge_style):
+def get_edges_without_weights(uv_ids, exclude_nodes, exclude_edges, edge_style):
     edge_str = ""
     style, color = edge_style
     for edge_id in range(uv_ids.shape[0]):
         u = uv_ids[edge_id, 0]
         v = uv_ids[edge_id, 1]
         if u in exclude_nodes or v in exclude_nodes:
+            continue
+
+        if (u, v) in exclude_edges:
             continue
 
         edge_str += "\\draw (n%d) edge[%s,%s] (n%d);\n" % (u, style, color, v)
@@ -67,18 +73,18 @@ def compute_edge_weights(rag, inp):
     return weights[:, 0]
 
 
-def get_edges(rag, edge_weights, exclude_nodes, edge_threshold,
-              edge_style):
+def get_edges(rag, edge_weights, exclude_nodes, exclude_edges,
+              edge_threshold, edge_style):
     uv_ids = rag.uvIds()
     if edge_weights is None:
-        edge_str = get_edges_without_weights(uv_ids, exclude_nodes, edge_style)
+        edge_str = get_edges_without_weights(uv_ids, exclude_nodes, exclude_edges, edge_style)
     else:
         if edge_weights.shape == tuple(rag.shape):
             edge_weights = compute_edge_weights(rag, edge_weights)
         assert len(edge_weights) == rag.numberOfEdges
         edge_str = get_edges_with_weights(uv_ids, edge_weights,
-                                          exclude_nodes, edge_threshold,
-                                          edge_style)
+                                          exclude_nodes, exclude_edges,
+                                          edge_threshold, edge_style)
     return edge_str
 
 
@@ -132,7 +138,7 @@ def style_to_string(style, return_color=False):
         return ",".join(k if v is None else "%s=%s" % (k, v) for k, v in style.items())
 
 
-def seg_to_region_graph(image, seg, out_path, edge_weights=None, exclude_nodes=[],
+def seg_to_region_graph(image, seg, out_path, edge_weights=None, exclude_nodes=[], exclude_edges=[],
                         edge_threshold=.5, node_style=get_node_style(), edge_style=get_edge_style()):
     if image.ndim == 3:
         assert image.shape[:-1] == seg.shape, "%s, %s" % (str(image.shape), str(seg.shape))
@@ -146,8 +152,8 @@ def seg_to_region_graph(image, seg, out_path, edge_weights=None, exclude_nodes=[
     node_str = get_nodes(seg, exclude_nodes,
                          style_to_string(node_style))
     # generate the edges
-    edge_str = get_edges(rag, edge_weights, exclude_nodes, edge_threshold,
-                         style_to_string(edge_style, return_color=True))
+    edge_str = get_edges(rag, edge_weights, exclude_nodes, exclude_edges,
+                         edge_threshold, style_to_string(edge_style, return_color=True))
 
     # write the tex files
     os.makedirs('./tmp_tex', exist_ok=True)
@@ -195,7 +201,7 @@ def get_lifted_edges(lifted_ids, lifted_weights, edge_threshold, edge_style):
 
 
 def lifted_graph(image, seg, lifted_ids, out_path, lifted_weights=None, edge_weights=None,
-                 exclude_nodes=[], edge_threshold=.5, node_style=get_node_style(),
+                 exclude_nodes=[], exclude_edges=[], edge_threshold=.5, node_style=get_node_style(),
                  edge_style=get_edge_style(), lifted_edge_style=get_lifted_edge_style()):
     if image.ndim == 3:
         assert image.shape[:-1] == seg.shape, "%s, %s" % (str(image.shape), str(seg.shape))
@@ -210,7 +216,7 @@ def lifted_graph(image, seg, lifted_ids, out_path, lifted_weights=None, edge_wei
                          style_to_string(node_style))
 
     # generate the edges
-    edge_str = get_edges(rag, edge_weights, exclude_nodes, edge_threshold,
+    edge_str = get_edges(rag, edge_weights, exclude_nodes, exclude_edges, edge_threshold,
                          style_to_string(edge_style, return_color=True))
 
     # generate the lifted edges
